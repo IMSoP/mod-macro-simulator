@@ -28,6 +28,5 @@ The script actually parses the config in two phases:
 The simulator currently has the following limitations
 
 * Macro names must be valid suffixes to a Perl subroutine name, as Macros are currently declared as global subs.
-* Macro definitions cannot contain `Use` statements, because the parsing is not recursive.
 * `UndefMacro` is not supported.
 * All files must be supplied on input, as there is no support for the `Include` directive.

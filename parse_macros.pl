@@ -2,43 +2,45 @@ use strict;
 use warnings;
 use Text::ParseWords;
 
-my $output = '
-print <<\'END_NON_MACRO_OUTPUT\';
+my $generated_perl = '
+my $content = <<\'END_CONTENT\';
 ';
 
 while ( <> ) {
     if ( /^\s*<Macro\s+(\S+)\s+(.*?)>/ ) {
-        $output .= "END_NON_MACRO_OUTPUT
+        $generated_perl .= "END_CONTENT
         
 sub Macro_$1 {
     my \@params = qw($2);
-    my \$content = <<'END_MACRO_CONTENT';
+    my \$content = <<'END_CONTENT';
 ";
     }
     elsif ( /^\s*<\/Macro>/ ) {
-        $output .= 'END_MACRO_CONTENT
+        $generated_perl .= 'END_CONTENT
         
     foreach my $param ( @params ) {
         my $replacement = shift;
         $content =~ s/\Q$param\E/$replacement/g;
     }
         
-    print $content;
+    return $content;
 }
 
-print <<\'END_NON_MACRO_OUTPUT\';
+$content .= <<\'END_CONTENT\';
 ';
     } elsif ( /^\s*Use\s+(\S+)\s+(.*)/ ) {
-        $output .= "END_NON_MACRO_OUTPUT
-Macro_$1(shellwords(q{$2}));
-print <<'END_NON_MACRO_OUTPUT';
+        $generated_perl .= "END_CONTENT
+\$content .= Macro_$1(shellwords(q{$2}));
+\$content .= <<'END_CONTENT';
 ";
     } else {
-        $output .= $_;
+        $generated_perl .= $_;
     }
 }
-$output .= '
-END_NON_MACRO_OUTPUT
+$generated_perl .= '
+END_CONTENT
+
+print $content;
 ';
 
-eval $output;
+eval $generated_perl;
