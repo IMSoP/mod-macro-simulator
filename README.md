@@ -23,8 +23,15 @@ The script actually parses the config in two phases:
 1. The configuration is transformed by regex into a Perl script where every `<Macro>` block is a sub-routine, and every `Use` statement invokes the appropriate sub-routine.
 2. The generated Perl is then run through `eval`, which prints the expanded Apache configuration to standard output.
 
-## Limitations
+## Includes
 
-The simulator currently has the following limitations
+There is no direct support for the `Include` directive, so including a file based on a macro parameter cannot be simulated. 
 
-* All files must be supplied on input, as there is no support for the `Include` directive.
+However, there is an accompanying utility to pre-process a file with `Includes` *outside* of Macros.
+  This also handles simple relative paths like ./foo and ../foo for portability of testing.
+
+For example, you can create a pipeline like this to test a file which combines `Include` and macro definitions:
+
+```shell
+perl parse_includes.pl path/to/sample/config.conf | perl parse_macros.pl | perl strip_comments.pl
+```
