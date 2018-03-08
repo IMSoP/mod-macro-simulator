@@ -8,7 +8,7 @@ my $content = <<\'END_CONTENT\';
 ';
 
 while ( <> ) {
-    if ( /^\s*<Macro\s+(\S+)\s+(.*?)>/ ) {
+    if ( /^\s*<Macro\s+(\S+)\s*(.*?)>/ ) {
         $generated_perl .= "END_CONTENT
         
 \$subs{'$1'} = sub {
@@ -29,7 +29,7 @@ while ( <> ) {
 
 $content .= <<\'END_CONTENT\';
 ';
-    } elsif ( /^\s*Use\s+(\S+)\s+(.*)/ ) {
+    } elsif ( /^\s*Use\s+(\S+)\s*(.*)/ ) {
         $generated_perl .= "END_CONTENT
 if ( ! defined \$subs{'$1'} ) { print \"ERROR: Undefined Macro '$1'\n\"; die; }
 \$content .= &{ \$subs{'$1'} }( shellwords(q{$2}) );
