@@ -31,11 +31,13 @@ $content .= <<\'END_CONTENT\';
 ';
     } elsif ( /^\s*Use\s+(\S+)\s+(.*)/ ) {
         $generated_perl .= "END_CONTENT
+if ( ! defined \$subs{'$1'} ) { print \"ERROR: Undefined Macro '$1'\n\"; die; }
 \$content .= &{ \$subs{'$1'} }( shellwords(q{$2}) );
 \$content .= <<'END_CONTENT';
 ";
     } elsif ( /^\s*UndefMacro\s+(\S+)/ ) {
         $generated_perl .= "END_CONTENT
+if ( ! defined \$subs{'$1'} ) { print \"ERROR: Undefined Macro '$1'\n\"; die; }
 delete \$subs{'$1'};
 \$content .= <<'END_CONTENT';
 ";
@@ -47,6 +49,10 @@ $generated_perl .= '
 END_CONTENT
 
 print $content;
+
+my $remaining_macros = keys %subs;
+print "\n\n# $remaining_macros macros defined at end of input (you might want to UndefMacro them).\n"
+    if $remaining_macros > 0;
 ';
 
 eval $generated_perl;
