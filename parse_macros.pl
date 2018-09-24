@@ -51,8 +51,11 @@ END_CONTENT
 print $content;
 
 my $remaining_macros = keys %subs;
-print "\n\n# $remaining_macros macros defined at end of input (you might want to UndefMacro them).\n"
-    if $remaining_macros > 0;
+
+if ($remaining_macros > 0) {
+	print "\n\n# $remaining_macros macros defined at end of input (you might want to UndefMacro them).\n";
+	print "# UndefMacro ", (join "\n# UndefMacro ", sort keys %subs), "\n";
+}
 ';
 
 eval $generated_perl;
