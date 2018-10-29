@@ -13,12 +13,19 @@ while ( <> ) {
         
 \$subs{'$1'} = sub {
     my \@params = qw($2);
+    
+    if ( scalar(\@_) != scalar(\@params) ) {
+        print \"ERROR: Macro $1 invoked with \", scalar(\@_), \" argument(s) but defined with \", scalar(\@params), \"\n\";
+        print \"> Use $1 \@_\n\";
+        die;
+    }
+    
     my \$content = <<'END_CONTENT';
 ";
     }
     elsif ( /^\s*<\/Macro>/ ) {
         $generated_perl .= 'END_CONTENT
-        
+    
     foreach my $param ( @params ) {
         my $replacement = shift;
         $content =~ s/\Q$param\E/$replacement/g;
